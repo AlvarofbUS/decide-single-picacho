@@ -35,38 +35,30 @@ class BoothView(TemplateView):
 
 
 class BoothListView(TemplateView):
+    #Colocamos el nombre de nuestra template
     template_name = 'booth/booth_list.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        print('--------------------------')
-        print(context)
-        print('--------------------------')
         context['KEYBITS'] = settings.KEYBITS
         return context
 
 
 class VotingList(APIView):
     def post(self, request):
+        # Obtenemos el id del usuario que ha iniciado sesión
         idUser = request.user.id
-        print('idUser: ', idUser)
-
+        # Obtenemos del móduclo Census los ids de las votaciones en las que se le permite votar al usuario
         votacionesCensus = Census.objects.filter(voter_id = idUser)
-        print('Votaciones Census: ', votacionesCensus)
         idsVotaciones = []
         for v in votacionesCensus:
             idsVotaciones.append(v.voting_id)
         
-        print('ids votaciones: ', idsVotaciones)
-
         votaciones = []
         for idVoting in idsVotaciones:
+            # Obtenemos cada votación gracias al id
             votacion = mods.get('voting', params={'id': idVoting})
             votaciones.append(votacion)
-            print('--------------------------')
-            print(votacion)
-
-        print('--------------------------')
-        print(votaciones)
-        print('--------------------------')
+        
+        # Mandamos las votaciones a nuestra página
         return Response(votaciones)
