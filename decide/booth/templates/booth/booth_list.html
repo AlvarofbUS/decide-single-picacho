@@ -22,7 +22,7 @@
                 </b-navbar-nav>
         </b-navbar>
         
-        <div class = "votaciones">
+        <div class = "votaciones" style="padding-left: 60px;"> 
             <!--Register -->
             <b-form @submit="onSubmitLogin" v-if="signup">
                 <b-form-group label="{% trans "Username" %}" label-for="username">
@@ -46,14 +46,23 @@
             
             <!-- Lista de votaciones pendientes -->
             <div v-if="!signup">
-                <h2>Listado de votaciones:</h2>
+                <h3> Listado de todas las votaciones:</h3>
                 <ul>
-                <b-form-group v-for="v in votaciones" :key="v.id">
-                    <b-form-group v-for="vi in v" :key="vi.id">
-                        <li v-if="vi.end_date ==None"><a :href="'http://localhost:8000/booth/' + vi.id">[[vi.name]] - [[vi.desc]]</a></li> 
-                        <li v-else ><a>[[vi.name]] - [[vi.desc]] - FINALIZADA</a></li> 
+                    <b-form-group v-for="votacion in votaciones" :key="votacion.id">
+                        <b-form-group v-for="v in votacion" :key="v.id">
+                            <li v-if="v.end_date == None && v.start_date != None"><a :href="'http://localhost:8000/booth/' + v.id">[[v.name]]: [[v.desc]]</a></li> 
+                            <li v-else-if="v.start_date == None"><a>[[v.name]]: [[v.desc]] - NO INICIADA</a></li> 
+                            <li v-else ><a>[[v.name]]: [[v.desc]] - FINALIZADA</a></li> 
+                        </b-form-group>
                     </b-form-group>
-                </b-form-group>
+                </ul>
+                <h3> Listado de votaciones abiertas:</h3>
+                <ul>
+                    <b-form-group v-for="votacion in votaciones" :key="votacion.id">
+                        <b-form-group v-for="v in votacion" :key="v.id">
+                            <li v-if="v.end_date == None && v.start_date != None"><a :href="'http://localhost:8000/booth/' + v.id">[[v.name]]: [[v.desc]]</a></li> 
+                        </b-form-group>
+                    </b-form-group>
                 </ul>
             </div>
         </div>       
@@ -139,7 +148,6 @@
                         .then(data => {
                             document.cookie = 'decide='+data.token+';';
                             this.token = data.token;
-                            console.log(this.token);
                             this.getUser();
                             this.getVotaciones();
                         })
@@ -152,7 +160,6 @@
                     this.postData("{% url "gateway" "authentication" "/getuser/" %}", data)
                         .then(data => {
                             this.user = data;
-                            console.log(this.user);
                             this.signup = false;
                         }).catch(error => {
                             this.showAlert("danger", '{% trans "Error: " %}' + error);
@@ -163,7 +170,6 @@
                     this.postData("{% url "gateway" "booth" "/votaciones/" %}", data)
                         .then(data => {
                             this.votaciones = data;
-                            console.log(this.votaciones);
                         }).catch(error => {
                             this.showAlert("danger", '{% trans "Error: " %}' + error);
                         });
