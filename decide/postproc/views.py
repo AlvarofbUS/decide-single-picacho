@@ -1,4 +1,4 @@
-from rest_framework.views import APIView
+    from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
@@ -70,8 +70,11 @@ class PostProcView(APIView):
 
         t = request.data.get('type', 'IDENTITY')
         opts = request.data.get('options', [])
+        s = request.data.get('escanio')
+        
 
         if t == 'IDENTITY':
             return self.identity(opts)
-
+        elif t == 'DHONDT':
+            return self.dhondt(opts, request.data.get('escanio'))
         return Response({})
