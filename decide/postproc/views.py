@@ -16,7 +16,7 @@ class PostProcView(APIView):
         out.sort(key=lambda x: -x['postproc'])
         return Response(out)
 
-     def dhondt(self, options, totalEscanio):
+    def dhondt(self, options, totalEscanio):
 
         #Salida que vamos a devolver
         out = [] 
@@ -54,7 +54,7 @@ class PostProcView(APIView):
         
         #Ordenamos las opciones
         out.sort(key = lambda x: -x['escanio'])
-        print(out)
+        
         
         
         
@@ -75,7 +75,6 @@ class PostProcView(APIView):
 
         t = request.data.get('type', 'IDENTITY')
         opts = request.data.get('options', [])
-        s = request.data.get('escanio')
         
 
         if t == 'IDENTITY':
