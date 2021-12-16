@@ -11,9 +11,48 @@ class PostProcView(APIView):
             out.append({
                 **opt,
                 'postproc': opt['votes'],
-            });
+            })
 
         out.sort(key=lambda x: -x['postproc'])
+        return Response(out)
+
+     def dhondt(self, options, totalEscanio):
+
+        
+        out = [] 
+
+        for opt in options:
+            out.append({
+                **opt, 
+
+                'escanio': 0,
+            })
+
+        
+        numEscanos = totalEscanio
+
+        while numEscanos>0:
+            
+            actual = 0
+            
+            for i in range(1, len(out)):
+                valorActual = out[actual]['votes'] / (out[actual]['escanio'] + 1)
+                valorComparar = out[i]['votes'] / (out[i]['escanio'] + 1)
+
+                
+                if(valorActual<valorComparar):
+                    actual = i
+            
+        
+            out[actual]['escanio'] = out[actual]['escanio'] + 1
+            numEscanos = numEscanos - 1
+        
+        
+        out.sort(key = lambda x: -x['escanio'])
+        print(out)
+        
+        
+        
         return Response(out)
 
     def post(self, request):
