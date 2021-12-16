@@ -7,6 +7,7 @@ from base import mods
 from base.models import Auth, Key
 
 
+
 class Question(models.Model):
     desc = models.TextField()
 
@@ -32,6 +33,7 @@ class Voting(models.Model):
     name = models.CharField(max_length=200)
     desc = models.TextField(blank=True, null=True)
     question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
+    escanios = models.PositiveSmallIntegerField(default=0)
 
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
@@ -100,7 +102,8 @@ class Voting(models.Model):
     def do_postproc(self):
         tally = self.tally
         options = self.question.options.all()
-
+        escanios = self.escanios
+        print(options)
         opts = []
         for opt in options:
             if isinstance(tally, list):
@@ -113,7 +116,7 @@ class Voting(models.Model):
                 'votes': votes
             })
 
-        data = { 'type': 'IDENTITY', 'options': opts }
+        data = { 'type': 'DHONDT', 'options': opts,'escanio':escanios}
         postp = mods.post('postproc', json=data)
 
         self.postproc = postp
