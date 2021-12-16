@@ -18,9 +18,11 @@ class PostProcView(APIView):
 
      def dhondt(self, options, totalEscanio):
 
-        
+        #Salida que vamos a devolver
         out = [] 
 
+        #Añadimos en options el parametro escanio donde se guardara
+        #la cantidad de escanios por opcion (la s en la formula de la ley)
         for opt in options:
             out.append({
                 **opt, 
@@ -28,13 +30,15 @@ class PostProcView(APIView):
                 'escanio': 0,
             })
 
-        
+        #Igualamos el nnumEscanios al numero total de escanios
         numEscanos = totalEscanio
 
+        #Entra en el bucle hasta que no se repartan todos los escanios
         while numEscanos>0:
             
             actual = 0
             
+            #Se comprueban las opciones posibles
             for i in range(1, len(out)):
                 valorActual = out[actual]['votes'] / (out[actual]['escanio'] + 1)
                 valorComparar = out[i]['votes'] / (out[i]['escanio'] + 1)
@@ -43,11 +47,12 @@ class PostProcView(APIView):
                 if(valorActual<valorComparar):
                     actual = i
             
-        
+            #Al final de recorrer todos, la opcion cuyo indice es actual es el que posee más votos y,
+            #por tanto, se le añade un escaño
             out[actual]['escanio'] = out[actual]['escanio'] + 1
             numEscanos = numEscanos - 1
         
-        
+        #Ordenamos las opciones
         out.sort(key = lambda x: -x['escanio'])
         print(out)
         
@@ -71,12 +76,10 @@ class PostProcView(APIView):
         t = request.data.get('type', 'IDENTITY')
         opts = request.data.get('options', [])
         s = request.data.get('escanio')
-        print(opts)
         
 
         if t == 'IDENTITY':
             return self.identity(opts)
         elif t == 'DHONDT':
-            print("Entra en metodo")
             return self.dhondt(opts, request.data.get('escanio'))
         return Response({})
