@@ -22,7 +22,7 @@
             <h2 v-if="!voting.start_date">Votación no comenzada</h2>
             <h2 v-else-if="!voting.end_date">Votación en curso</h2>
             <div v-else>
-                <h2 class="heading">Resultados:</h2>
+                <h2 class="heading">Resultados: </h2>
 
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -30,11 +30,12 @@
                             <th>Opción</th>
                             <th>Puntuación</th>
                             <th>Votos</th>
+                           
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="opt in voting.postproc" :key="opt.number">
-                            <th>[[opt.option]]</th>
+                            <th >[[opt.option]]</th>
                             <td>[[opt.postproc]]</td>
                             <td class="text-muted">[[opt.votes]]</td>
                         </tr>
@@ -44,7 +45,13 @@
 
         </div>
     </div>
+    <canvas  id="voteChart" width="400" height="400"></canvas>
+    
 {% endblock %}
+
+ 
+
+ 
 
 {% block extrabody %}
     <!-- Vuejs -->
@@ -54,6 +61,8 @@
 
     <script>
         var voting = {{voting|safe}};
+        var labels=[];
+        var chartdata=[];
         var app = new Vue({
             delimiters: ['[[', ']]'],
             el: '#app-visualizer',
@@ -61,6 +70,42 @@
                 voting: voting
             }
         })
+        for (let index = 0; index < voting.postproc.length; index++) {
+            labels.push(voting.postproc[index].option);
+            chartdata.push(voting.postproc[index].votes);
+        };       
+        
+          
+    const ctx = document.getElementById('voteChart').getContext('2d');
+    const voteChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+            label: 'Number of Votes',
+            data: chartdata,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 99, 132, 0.2)',
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive:false,
+        maintainAspectRatio:false,
+        aspectRatio:4,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
     </script>
 </body>
 {% endblock %}
