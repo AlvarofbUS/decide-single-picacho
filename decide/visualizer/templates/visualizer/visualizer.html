@@ -28,14 +28,14 @@
                     <thead>
                         <tr>
                             <th>Opción</th>
-                            <th>Puntuación</th>
                             <th>Votos</th>
+                            <th>Escaños</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="opt in voting.postproc" :key="opt.number">
                             <th>[[opt.option]]</th>
-                            <td>[[opt.postproc]]</td>
+                            <td class="text-muted">[[opt.escanio]]</td>
                             <td class="text-muted">[[opt.votes]]</td>
                         </tr>
                     </tbody>
@@ -44,6 +44,13 @@
 
         </div>
     </div>
+    <div class="row">
+        <div class="votechart-vis">
+        
+    <canvas  id="voteChart" width="300" height="300"></canvas>
+    </div><div class="votechart-vis">
+    <canvas  id="eschart" width="300" height="300"></canvas>
+    </div></div><
 {% endblock %}
 
 {% block extrabody %}
@@ -54,13 +61,84 @@
 
     <script>
         var voting = {{voting|safe}};
+        var labels=[];
+        var chartdata=[];
+        var escanios=[];
         var app = new Vue({
             delimiters: ['[[', ']]'],
             el: '#app-visualizer',
             data: {
                 voting: voting
             }
+           
         })
+        for (let index = 0; index < voting.postproc.length; index++) {
+                labels.push(voting.postproc[index].option);
+                chartdata.push(voting.postproc[index].votes);
+                escanios.push(voting.postproc[index].escanio);
+        }; 
+        const ctx = document.getElementById('voteChart').getContext('2d');
+        const voteChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                label: 'Number of Votes',
+                 data: escanios,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 99, 132, 0.2)',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio:false,
+            aspectRatio:5,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+         
+        const eschart = new Chart(document.getElementById('eschart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                label: 'Number of Escanios',
+                 data: escanios,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 99, 132, 0.2)',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive:true,
+            maintainAspectRatio:false,
+            aspectRatio:5,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+        
+        
+    });
     </script>
 </body>
 {% endblock %}
