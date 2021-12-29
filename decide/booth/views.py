@@ -7,8 +7,6 @@ from rest_framework.response import Response
 
 from base import mods
 from census.models import Census
-from voting.models import Voting
-from voting.serializers import VotingSerializer
 
 
 # TODO: check permissions and census
