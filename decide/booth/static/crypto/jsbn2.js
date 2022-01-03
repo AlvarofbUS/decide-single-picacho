@@ -13,7 +13,7 @@ function bnClone() { var r = nbi(); this.copyTo(r); return r; }
 // (public) return value as integer
 function bnIntValue() {
   if(this.s < 0) {
-    if(this.t == 1) return this.arr[0]-this.DV;
+    if(this.t === 1) return this.arr[0]-this.DV;
     else if(this.t == 0) return -1;
   }
   else if(this.t == 1) return this.arr[0];
@@ -41,7 +41,7 @@ function bnSigNum() {
 // (protected) convert to radix string
 function bnpToRadix(b) {
   if(b == null) b = 10;
-  if(this.signum() == 0 || b < 2 || b > 36) return "0";
+  if(this.signum() === 0 || b < 2 || b > 36) return "0";
   var cs = this.chunkSize(b);
   var a = Math.pow(b,cs);
   var d = nbv(a), y = nbi(), z = nbi(), r = "";

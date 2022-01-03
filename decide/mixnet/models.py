@@ -30,13 +30,10 @@ class Mixnet(models.Model):
 
     def shuffle(self, msgs, pk):
         crypt = MixCrypt(bits=B)
-        k = crypt.setk(self.key.p, self.key.g, self.key.y, self.key.x)
-
         return crypt.shuffle(msgs, pk)
 
     def decrypt(self, msgs, pk, last=False):
         crypt = MixCrypt(bits=B)
-        k = crypt.setk(self.key.p, self.key.g, self.key.y, self.key.x)
         return crypt.shuffle_decrypt(msgs, last)
 
     def gen_key(self, p=0, g=0):

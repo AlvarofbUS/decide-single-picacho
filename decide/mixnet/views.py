@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from .serializers import MixnetSerializer
 from .models import Auth, Mixnet, Key
-from base.serializers import KeySerializer, AuthSerializer
+from base.serializers import KeySerializer
 
 
 class MixnetViewSet(viewsets.ModelViewSet):
