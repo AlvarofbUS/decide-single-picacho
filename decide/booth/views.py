@@ -48,7 +48,7 @@ class VotingList(APIView):
     def post(self, request):
         # Obtenemos el id del usuario que ha iniciado sesión
         idUser = request.user.id
-        # Obtenemos del móduclo Census los ids de las votaciones en las que se le permite votar al usuario
+        # Obtenemos del módulo Census los ids de las votaciones en las que se le permite votar al usuario
         votacionesCensus = Census.objects.filter(voter_id = idUser)
         idsVotaciones = []
         for v in votacionesCensus:

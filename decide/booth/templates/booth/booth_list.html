@@ -6,7 +6,6 @@
          href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet"
          href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
-    <link type="text/css" rel="stylesheet" href="{% static "booth/style.css" %}" />
 {% endblock %}
 
 
@@ -21,6 +20,10 @@
                     </b-nav-item>
                 </b-navbar-nav>
         </b-navbar>
+
+        <b-alert :variant="alertLvl" dismissible v-model="alertShow">
+            [[ alertMsg ]]
+        </b-alert>
         
         <div class = "votaciones" style="padding-left: 60px;"> 
             <!--Register -->
@@ -71,17 +74,6 @@
 {% endblock %}
 
 {% block extrabody %}
-    <!-- needed to generate big random -->
-    <script src="{% static "crypto/sjcl.js" %}"></script>
-
-    <!-- Big integer -->
-    <script src="{% static "crypto/jsbn.js" %}"></script>
-    <script src="{% static "crypto/jsbn2.js" %}"></script>
-    <script src="{% static "crypto/bigint.js" %}"></script>
-
-    <!-- ElGamal encrypt -->
-    <script src="{% static "crypto/elgamal.js" %}"></script>
-
     <!-- Vuejs -->
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
