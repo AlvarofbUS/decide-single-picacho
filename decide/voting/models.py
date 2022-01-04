@@ -113,7 +113,7 @@ class Voting(models.Model):
                 'votes': votes
             })
 
-        data = { 'type': 'SIMPLE', 'options': opts,'escanio':escanios}
+        data = { 'type': 'IDENTITY', 'options': opts,'escanio':escanios}
         postp = mods.post('postproc', json=data)
 
         self.postproc = postp
