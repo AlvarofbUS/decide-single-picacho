@@ -95,7 +95,6 @@ class PostProcView(APIView):
                         c = c + 1
                 out[now]['escanio'] = out[now]['escanio'] + 1
                 sea = sea - 1
-            print(out)
         return Response(out)
 
     def post(self, request):
@@ -112,7 +111,6 @@ class PostProcView(APIView):
         """
 
         t = request.data.get('type')
-        print(t)
         opts = request.data.get('options', [])
         
 
