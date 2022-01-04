@@ -1,0 +1,29 @@
+{
+    "voting1": [
+        {
+            "type": "DHONDT",
+            "options": [
+                {"option": "Option 1", "number": 1, "votes": 510},
+                {"option": "Option 2", "number": 2, "votes": 250},
+                {"option": "Option 3", "number": 3, "votes": 450},
+                {"option": "Option 4", "number": 4, "votes": 300},
+                {"option": "Option 5", "number": 5, "votes": 150}
+            ],
+            "escanio": 7
+        }
+    ],
+        
+    "voting2": [
+        {
+            "type": "SIMPLE",
+            "options": [
+                {"option": "Option 1", "number": 1, "votes": 432},
+                {"option": "Option 2", "number": 2, "votes": 943},
+                {"option": "Option 3", "number": 3, "votes": 645},
+                {"option": "Option 4", "number": 4, "votes": 213}
+            ],
+            "escanio": 10
+        }
+    ]
+
+}
