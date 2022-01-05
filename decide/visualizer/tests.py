@@ -103,10 +103,8 @@ class TestVisualizer_Selenium():
     assert self.driver.find_element(By.CSS_SELECTOR, "th:nth-child(3)").text == "Votos"
     elements = self.driver.find_elements(By.ID, "voteChart")
     assert len(elements) > 0
-    elements = self.driver.find_elements(By.ID, "eschart")
-    assert len(elements) == 0
     self.driver.close()
-'''
+
   def test_visualizer2(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
@@ -124,4 +122,4 @@ class TestVisualizer_Selenium():
     elements = self.driver.find_elements(By.ID, "eschart")
     assert len(elements) > 0
     self.driver.close()
-    '''
+    
