@@ -89,7 +89,7 @@ class TestVisualizer_Selenium():
   
   def teardown(self):
     self.driver.quit()
-  
+
   def test_visualizer(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
@@ -101,7 +101,27 @@ class TestVisualizer_Selenium():
     self.driver.find_element(By.CSS_SELECTOR, ".submit-row > input").click()
     self.driver.get("http://127.0.0.1:8000/visualizer/1/")
     assert self.driver.find_element(By.CSS_SELECTOR, "th:nth-child(3)").text == "Votos"
-    self.driver.get("http://127.0.0.1:8000/visualizer/3/")
-    assert self.driver.find_element(By.CSS_SELECTOR, "th:nth-child(2)").text == "Escaños"
+    elements = self.driver.find_elements(By.ID, "voteChart")
+    assert len(elements) > 0
+    elements = self.driver.find_elements(By.ID, "eschart")
+    assert len(elements) == 0
     self.driver.close()
-  
+'''
+  def test_visualizer2(self):
+    self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
+    self.driver.set_window_size(970, 518)
+    self.driver.find_element(By.ID, "id_username").send_keys("decide")
+    self.driver.find_element(By.ID, "id_password").send_keys("decide123")
+    self.driver.find_element(By.ID, "content").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".login").click()
+    self.driver.find_element(By.ID, "content").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".submit-row > input").click()
+    self.driver.get("http://127.0.0.1:8000/visualizer/3/")
+    assert self.driver.find_element(By.CSS_SELECTOR, "th:nth-child(3)").text == "Votos"
+    assert self.driver.find_element(By.CSS_SELECTOR, "th:nth-child(2)").text == "Escaños"
+    elements = self.driver.find_elements(By.ID, "voteChart")
+    assert len(elements) > 0
+    elements = self.driver.find_elements(By.ID, "eschart")
+    assert len(elements) > 0
+    self.driver.close()
+    '''
