@@ -13,4 +13,4 @@ django-heroku
 gunicorn
 django-chartjs
 chartjs
-
+selenium
