@@ -1,14 +1,7 @@
 name: Python application
 
-on:
-  push:
-    branches:
-- master
-  workflow_call:
-    secrets:
-      CODACY_PROJECT_TOKEN:
-        required: true
-      HEROKU_API_KEY:
+on: [push]
+
 jobs:
   build:
     strategy:
