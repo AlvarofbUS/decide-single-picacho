@@ -10,77 +10,14 @@ from django.test import TestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
 from base.tests import BaseTestCase
-'''class TestVisualizer():
-  def get_or_create_user(self,pk):
-      user=User.objects.get_user(pk)
-      user.username='user{}'.format(pk)
-      user.set_password('qwerty')
-      user.is_staff=True
-      user.save()
-     
-      return user
- 
-    def create_voting(self):
-        q = Question(desc='test question')
-        q.save()
-        for i in range(5):
-            opt = QuestionOption(question=q, option='option {}'.format(i+1))
-            opt.save()
-        v = Voting(name='test voting', question=q)
-        v.save()
 
-        a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
-                                          defaults={'me': True, 'name': 'test auth'})
-        a.save()
-        v.auths.add(a)
-
-        return v
-
-    def create_voters(self, v):
-        for i in range(100):
-            u, _ = User.objects.get_or_create(username='testvoter{}'.format(i))
-            u.is_active = True
-            u.save()
-            c = Census(voter_id=u.id, voting_id=v.id)
-            c.save()
-
-    def get_or_create_user(self, pk):
-        user, _ = User.objects.get_or_create(pk=pk)
-        user.username = 'user{}'.format(pk)
-        user.set_password('qwerty')
-        user.save()
-        return user
-
-    def store_votes(self, v):
-        voters = list(Census.objects.filter(voting_id=v.id))
-        voter = voters.pop()
-
-        clear = {}
-        for opt in v.question.options.all():
-            clear[opt.number] = 0
-            for i in range(random.randint(0, 5)):
-                a, b = self.encrypt_msg(opt.number, v)
-                data = {
-                    'voting': v.id,
-                    'voter': voter.voter_id,
-                    'vote': { 'a': a, 'b': b },
-                }
-                clear[opt.number] += 1
-                user = self.get_or_create_user(voter.voter_id)
-                self.login(user=user.username)
-                voter = voters.pop()
-                mods.post('store', json=data)
-        return clear
-
-  def get_voting(self,pk):
-      voting=j
-'''
 class TestVisualizer_Selenium():
   def setup(self):
     
@@ -89,7 +26,7 @@ class TestVisualizer_Selenium():
   
   def teardown(self):
     self.driver.quit()
-
+#Test que comprueba que se muestra la vista de votos en un metodo normal, debe tener un voto normal previamente hecho y añadirla a la url
   def test_visualizer(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
@@ -105,6 +42,7 @@ class TestVisualizer_Selenium():
     assert len(elements) > 0
     self.driver.close()
 
+#Test que comprueba que se muestra la vista de votos en un metodo normal, debe tener un votación dhondt previamente hecho y añadir la id en la url
   def test_visualizer2(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
@@ -122,4 +60,118 @@ class TestVisualizer_Selenium():
     elements = self.driver.find_elements(By.ID, "eschart")
     assert len(elements) > 0
     self.driver.close()
+
+  def test_visualizer3(self):
+    self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
+    self.driver.set_window_size(970, 518)
+    self.driver.find_element(By.ID, "id_username").send_keys("decide")
+    self.driver.find_element(By.ID, "id_password").send_keys("decide123")
+    self.driver.find_element(By.CSS_SELECTOR, ".submit-row > input").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".model-question .addlink").click()
+    self.driver.find_element(By.ID, "id_desc").send_keys("TESTSEL")
+    self.driver.find_element(By.ID, "id_options-0-number").click()
+    self.driver.find_element(By.ID, "id_options-0-number").send_keys("1")
+    self.driver.find_element(By.ID, "id_options-0-option").click()
+    self.driver.find_element(By.ID, "id_options-0-option").send_keys("1")
+    self.driver.find_element(By.ID, "id_options-1-number").click()
+    self.driver.find_element(By.ID, "id_options-1-number").send_keys("2")
+    self.driver.find_element(By.ID, "id_options-1-option").click()
+    self.driver.find_element(By.ID, "id_options-1-option").send_keys("2")
+    self.driver.find_element(By.NAME, "_save").click()
+    self.driver.find_element(By.LINK_TEXT, "Voting").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".model-voting .addlink").click()
+    element = self.driver.find_element(By.CSS_SELECTOR, "#id_auths > option:nth-child(2)")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).click_and_hold().perform()
+    element = self.driver.find_element(By.ID, "id_auths")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).release().perform()
+    dropdown = self.driver.find_element(By.ID, "id_auths")
+    ActionChains(dropdown).double_click(dropdown.find_element(By.XPATH, "//option[. = 'http://localhost:8000']"))
+    self.driver.find_element(By.ID, "id_name").click()
+    self.driver.find_element(By.ID, "id_name").send_keys("TEST")
+    dropdown = self.driver.find_element(By.ID, "id_question")
+    dropdown.find_element(By.XPATH, "//option[. = 'TESTSEL']").click()
+    element = self.driver.find_element(By.ID, "id_question")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).click_and_hold().perform()
+    element = self.driver.find_element(By.ID, "id_question")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).perform()
+    element = self.driver.find_element(By.ID, "id_question")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).release().perform()
+    self.driver.find_element(By.ID, "id_escanios").send_keys("2")
+    self.driver.find_element(By.ID, "id_escanios").click()
+    element = self.driver.find_element(By.ID, "id_escanios")
+    actions = ActionChains(self.driver)
+    actions.double_click(element).perform()
+    self.driver.find_element(By.NAME, "_save").click()
+    self.driver.find_element(By.LINK_TEXT, "TEST").click()
+    idv=self.find_id()
+    self.driver.get("http://127.0.0.1:8000/visualizer/{}/".format(idv))
+    self.driver.find_element(By.CSS_SELECTOR, ".voting").click()
+    assert self.driver.find_element(By.CSS_SELECTOR, "h2").text == "Votación no comenzada"
+    self.driver.get("http://127.0.0.1:8000/admin/")
+    self.driver.find_element(By.LINK_TEXT, "Votings").click()
+    self.driver.find_element(By.NAME, "_selected_action").click()
+    dropdown = self.driver.find_element(By.NAME, "action")
+    dropdown.find_element(By.XPATH, "//option[. = 'Start']").click()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).click_and_hold().perform()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).perform()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).release().perform()
+    self.driver.find_element(By.NAME, "index").click()
+    self.driver.get("http://127.0.0.1:8000/visualizer/{}/".format(idv))
+    self.driver.find_element(By.CSS_SELECTOR, "h2").click()
+    assert self.driver.find_element(By.CSS_SELECTOR, "h2").text == "Votación en curso"
+    self.driver.get("http://127.0.0.1:8000/admin/")
+    self.driver.find_element(By.LINK_TEXT, "Votings").click()
+    self.driver.find_element(By.NAME, "_selected_action").click()
+    dropdown = self.driver.find_element(By.NAME, "action")
+    dropdown.find_element(By.XPATH, "//option[. = 'Stop']").click()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).click_and_hold().perform()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).perform()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).release().perform()
+    self.driver.find_element(By.NAME, "index").click()
+    self.driver.get("http://127.0.0.1:8000/visualizer/{}/".format(idv))
+    self.driver.find_element(By.CSS_SELECTOR, ".voting").click()
+    assert self.driver.find_element(By.CSS_SELECTOR, "h2").text == "Votación no contada"
+    self.driver.get("http://127.0.0.1:8000/admin/")
+    self.driver.find_element(By.LINK_TEXT, "Votings").click()
+    dropdown = self.driver.find_element(By.NAME, "action")
+    dropdown.find_element(By.XPATH, "//option[. = 'Tally']").click()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).click_and_hold().perform()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).perform()
+    element = self.driver.find_element(By.NAME, "action")
+    actions = ActionChains(self.driver)
+    actions.move_to_element(element).release().perform()
+    self.driver.find_element(By.NAME, "_selected_action").click()
+    self.driver.find_element(By.NAME, "index").click()
+    self.driver.get("http://127.0.0.1:8000/visualizer/{}/".format(idv))
+    self.driver.find_element(By.CSS_SELECTOR, ".heading").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".heading").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".heading").click()
+    assert self.driver.find_element(By.CSS_SELECTOR, ".heading").text == "Resultados:"
+    self.driver.close()
+
+  def find_id(self):
+      url=self.driver.current_url
+      idv=url.split("/")[6]
+      return idv
     
