@@ -63,3 +63,59 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
+    
+    def test_simple(self):
+        data = {
+            'type': 'SIMPLE',
+            'escanio': 7,
+            'options': [
+                { 'option': 'Option 1', 'number': 1, 'votes': 5 }, 
+                { 'option': 'Option 2', 'number': 2, 'votes': 2 },
+                { 'option': 'Option 3', 'number': 3, 'votes': 5 },
+                { 'option': 'Option 4', 'number': 4, 'votes': 2 },
+                { 'option': 'Option 5', 'number': 5, 'votes': 5 },
+                { 'option': 'Option 6', 'number': 6, 'votes': 1 },
+            ]
+        } 
+        
+        expect_result = [
+            { 'option': 'Option 1', 'number': 1, 'votes': 5, 'escanio': 2 },
+            { 'option': 'Option 3', 'number': 3, 'votes': 5, 'escanio': 2 },
+            { 'option': 'Option 5', 'number': 5, 'votes': 5, 'escanio': 2 },
+            { 'option': 'Option 2', 'number': 2, 'votes': 2, 'escanio': 1 },
+            { 'option': 'Option 4', 'number': 4, 'votes': 2, 'escanio': 0 },
+            { 'option': 'Option 6', 'number': 6, 'votes': 1, 'escanio': 0 },
+            ]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expect_result)
+
+    def test_simple2(self):
+        data = {
+            'type': 'SIMPLE',
+            'escanio':70,
+            'options': [
+                { 'option': 'Option 1', 'number': 1, 'votes': 50 },
+                { 'option': 'Option 2', 'number': 2, 'votes': 11 },
+                { 'option': 'Option 3', 'number': 3, 'votes': 10},
+                { 'option': 'Option 4', 'number': 4, 'votes': 1 },
+                { 'option': 'Option 5', 'number': 5, 'votes': 6 },
+                { 'option': 'Option 6', 'number': 6, 'votes': 4 },
+            ]
+        }
+        expected_result = [
+            { 'option': 'Option 1', 'number': 1, 'votes': 50, 'escanio':  43},
+            { 'option': 'Option 2', 'number': 2, 'votes': 11, 'escanio':  9},
+            { 'option': 'Option 3', 'number': 3, 'votes': 10, 'escanio': 9},
+            { 'option': 'Option 5', 'number': 5, 'votes': 6, 'escanio': 5},
+            { 'option': 'Option 6', 'number': 6, 'votes': 4, 'escanio': 3},
+            { 'option': 'Option 4', 'number': 4, 'votes': 1, 'escanio': 1},
+        ]
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
