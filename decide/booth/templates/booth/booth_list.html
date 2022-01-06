@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+{% endblock %}
+
+
+{% block content %}
+    <div id="app-list-booth">
+        <!-- Navbar -->
+        <b-navbar type="dark" variant="secondary">
+            <b-navbar-brand tag="h1">Decide</b-navbar-brand>
+                <b-navbar-nav class="ml-auto" v-if="!signup">
+                    <b-nav-item href="#" v-on:click="decideLogout">
+                        {% trans "logout" %}
+                    </b-nav-item>
+                </b-navbar-nav>
+        </b-navbar>
+
+        <b-alert :variant="alertLvl" dismissible v-model="alertShow">
+            [[ alertMsg ]]
+        </b-alert>
+        
+        <div class = "votaciones" style="padding-left: 60px;"> 
+            <!--Register -->
+            <b-form @submit="onSubmitLogin" v-if="signup">
+                <b-form-group label="{% trans "Username" %}" label-for="username">
+                    <b-form-input
+                        id="username"
+                        type="text"
+                        v-model="form.username"
+                        autocomplete="username"
+                        required />
+                </b-form-group>
+                <b-form-group label="{% trans "Password" %}" label-for="password">
+                    <b-form-input
+                        id="password"
+                        type="password"
+                        autocomplete="current-password"
+                        v-model="form.password"
+                        required />
+                </b-form-group>
+                <b-button type="submit" variant="primary">{% trans "Login" %}</b-button>
+            </b-form>
+            
+            <!-- Lista de votaciones pendientes -->
+            <div v-if="!signup">
+                <h3> Listado de todas las votaciones:</h3>
+                <ul>
+                    <b-form-group v-for="votacion in votaciones" :key="votacion.id">
+                        <b-form-group v-for="v in votacion" :key="v.id">
+                            <li v-if="v.end_date == None && v.start_date != None"><a :href="'http://localhost:8000/booth/' + v.id">[[v.name]]: [[v.desc]]</a></li> 
+                            <li v-else-if="v.start_date == None"><a>[[v.name]]: [[v.desc]] - NO INICIADA</a></li> 
+                            <li v-else ><a>[[v.name]]: [[v.desc]] - FINALIZADA</a></li> 
+                        </b-form-group>
+                    </b-form-group>
+                </ul>
+                <h3> Listado de votaciones abiertas:</h3>
+                <ul>
+                    <b-form-group v-for="votacion in votaciones" :key="votacion.id">
+                        <b-form-group v-for="v in votacion" :key="v.id">
+                            <li v-if="v.end_date == None && v.start_date != None"><a :href="'http://localhost:8000/booth/' + v.id">[[v.name]]: [[v.desc]]</a></li> 
+                        </b-form-group>
+                    </b-form-group>
+                </ul>
+            </div>
+        </div>       
+    </div>
+
+{% endblock %}
+
+{% block extrabody %}
+    <!-- Vuejs -->
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+
+    <script>
+        var app = new Vue({
+            delimiters: ['[[', ']]'],
+            el: '#app-list-booth',
+            data: {
+                keybits: {{ KEYBITS }},
+                votaciones: [],
+                signup: true,
+                alertShow: false,
+                alertMsg: "",
+                alertLvl: "info",
+                token: null,
+                user: null,
+                form: {
+                    username: '',
+                    password: ''
+                },
+                beforeMount() {
+                    this.init()
+                    ElGamal.BITS = this.keybits;
+                },
+            },
+            methods: {
+                init() {
+                    var cookies = document.cookie.split("; ");
+                    cookies.forEach((c) => {
+                        var cs = c.split("=");
+                        if (cs[0] == 'decide' && cs[1]) {
+                            this.token = cs[1];
+                            this.getUser();
+                        }
+                    });
+                },
+                postData(url, data) {
+                    var fdata = {
+                        body: JSON.stringify(data),
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                        method: 'POST',
+                    };
+
+                    if (this.token) {
+                        fdata.headers['Authorization'] = 'Token ' + this.token;
+                    }
+
+                    return fetch(url, fdata)
+                        .then(response => {
+                            if (response.status === 200) {
+                                return response.json();
+                            } else {
+                                return Promise.reject(response.statusText);
+                            }
+                        });
+                },
+                onSubmitLogin(evt) {
+                    evt.preventDefault();
+                    this.postData("{% url "gateway" "authentication" "/login/" %}", this.form)
+                        .then(data => {
+                            document.cookie = 'decide='+data.token+';';
+                            this.token = data.token;
+                            this.getUser();
+                            this.getVotaciones();
+                        })
+                        .catch(error => {
+                            this.showAlert("danger", '{% trans "Error: " %}' + error);
+                        });
+                },
+                getUser(evt) {
+                    var data = {token: this.token};
+                    this.postData("{% url "gateway" "authentication" "/getuser/" %}", data)
+                        .then(data => {
+                            this.user = data;
+                            this.signup = false;
+                        }).catch(error => {
+                            this.showAlert("danger", '{% trans "Error: " %}' + error);
+                        });
+                },
+                getVotaciones(evt) {
+                    var data = {user: this.user};
+                    this.postData("{% url "gateway" "booth" "/votaciones/" %}", data)
+                        .then(data => {
+                            this.votaciones = data;
+                        }).catch(error => {
+                            this.showAlert("danger", '{% trans "Error: " %}' + error);
+                        });
+                },
+                decideLogout(evt) {
+                    evt.preventDefault();
+                    var data = {token: this.token};
+                    this.postData("{% url "gateway" "authentication" "/logout/" %}", data);
+                    this.token = null;
+                    this.user = null;
+                    document.cookie = 'decide=;';
+                    this.signup = true;
+                },
+                showAlert(lvl, msg) {
+                    this.alertLvl = lvl;
+                    this.alertMsg = msg;
+                    this.alertShow = true;
+                }
+            },
+    })
+    </script>
+
+{% endblock %}

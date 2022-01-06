@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from base import mods
 from base.models import Auth, Key
@@ -78,7 +76,6 @@ class Voting(models.Model):
         auth = self.auths.first()
         shuffle_url = "/shuffle/{}/".format(self.id)
         decrypt_url = "/decrypt/{}/".format(self.id)
-        auths = [{"name": a.name, "url": a.url} for a in self.auths.all()]
 
         # first, we do the shuffle
         data = { "msgs": votes }
@@ -119,6 +116,7 @@ class Voting(models.Model):
                 'number': opt.number,
                 'votes': votes
             })
+
 
         data = { 'type': postproc_mode, 'options': opts,'escanio':escanios}
         postp = mods.post('postproc', json=data)

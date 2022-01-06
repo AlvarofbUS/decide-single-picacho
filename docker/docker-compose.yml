@@ -4,11 +4,13 @@ services:
   db:
     restart: always
     container_name: decide_db
-    image: postgres:alpine
+    image: postgres:10.15-alpine
     volumes:
       - db:/var/lib/postgresql/data
     networks:
       - decide
+    environment:
+      - POSTGRES_PASSWORD=postgres
   web:
     restart: always
     container_name: decide_web
@@ -18,7 +20,7 @@ services:
     expose:
       - "5000"
     volumes:
-      - static:/app/static
+      - static:/app/staticfiles
     depends_on:
       - db
     networks:
@@ -31,7 +33,7 @@ services:
         context: .
         dockerfile: Dockerfile-nginx
     volumes:
-      - static:/app/static
+      - static:/app/staticfiles
     ports:
       - "8000:80"
     depends_on:
