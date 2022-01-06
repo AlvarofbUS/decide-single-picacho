@@ -36,8 +36,6 @@ jobs:
         pip install codacy-coverage
     - name: Run migrations
       run: cd decide;python manage.py makemigrations;python manage.py migrate
-    - name: Creation user postgres
-      run: cd decide;sudo su - postgres;createuser -s -r postgres
     - name: Run tests
       run: cd decide;coverage run --branch --source=. ./manage.py test --keepdb; coverage xml;
     - name: Codacy Coverage Reporter
