@@ -11,7 +11,7 @@ DATABASES = {
     }
 }
 
-STATIC_ROOT = '/app/static/'
+STATIC_ROOT = '/app/staticfiles/'
 MEDIA_ROOT = '/app/static/media/'
 ALLOWED_HOSTS = ['*']
 
