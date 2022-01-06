@@ -34,6 +34,9 @@ class Voting(models.Model):
     desc = models.TextField(blank=True, null=True)
     question = models.ForeignKey(Question, related_name='voting', on_delete=models.CASCADE)
     escanios = models.PositiveSmallIntegerField(default=0)
+    
+    POSTPROC_MODES = (('IDENTITY', 'Identity'), ('DHONDT',"D'hondt"), ('SIMPLE', 'Simple'))
+    postproc_mode = models.CharField(choices=POSTPROC_MODES, max_length=32, default='IDENTITY')
 
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
@@ -103,6 +106,7 @@ class Voting(models.Model):
         tally = self.tally
         options = self.question.options.all()
         escanios = self.escanios
+        postproc_mode = self.postproc_mode
         print(options)
         opts = []
         for opt in options:
@@ -116,7 +120,7 @@ class Voting(models.Model):
                 'votes': votes
             })
 
-        data = { 'type': 'DHONDT', 'options': opts,'escanio':escanios}
+        data = { 'type': postproc_mode, 'options': opts,'escanio':escanios}
         postp = mods.post('postproc', json=data)
 
         self.postproc = postp
