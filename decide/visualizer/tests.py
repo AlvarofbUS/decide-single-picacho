@@ -31,8 +31,8 @@ class TestVisualizer_Selenium():
   def teardown(self):
     self.driver.quit()
 
-#Test que comprueba que se muestra la vista de votos en un metodo normal, debe tener un voto normal previamente hecho y añadirla a la url
-  def test_visualizer(self):
+#Test que comprueba que se muestra la vista de votos en un metodo normal, debe tener un voto normal previamente hecho y añadirla a la url del test
+  def test_visualizer_normal(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
     self.driver.find_element(By.ID, "id_username").send_keys("decide")
@@ -47,8 +47,8 @@ class TestVisualizer_Selenium():
     assert len(elements) > 0
     self.driver.close()
 
-#Test que comprueba que se muestra la vista de votos en un metodo normal, debe tener un votación dhondt previamente hecho y añadir la id en la url
-  def test_visualizer2(self):
+#Test que comprueba que se muestra la vista de votos en el metodo de DHONT, debe tener un votación dhondt previamente hecho y añadir la id en la url del test
+  def test_visualizer_dhont(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
     self.driver.find_element(By.ID, "id_username").send_keys("decide")
@@ -66,6 +66,7 @@ class TestVisualizer_Selenium():
     assert len(elements) > 0
     self.driver.close()
 
+#Este test comprueba que sale el aviso de que la votacion a visualizar no ha comenzado
   def test_visualizer_creation(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
@@ -124,7 +125,7 @@ class TestVisualizer_Selenium():
     idv=url.split("/")[6]
     return idv
     
-#El test anterior se queda en la votación no comenzada y el siguiente testearia la votacion en curso
+#Este test comprueba que sale el aviso de que la votacion a visualizar está en curso
   
   def test_visualizer_start(self):
     
@@ -156,7 +157,7 @@ class TestVisualizer_Selenium():
     assert self.driver.find_element(By.CSS_SELECTOR, "h2").text == "Votación en curso"
     self.driver.close()
 
-
+#Este test comprueba que sale el aviso de que la votacion a visualizar no se ha contado
   def test_visualizer_stop(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
@@ -187,6 +188,7 @@ class TestVisualizer_Selenium():
     
     self.driver.close()
 
+#Este test comprueba que la votacion a visualizar se visualiza bien
   def test_visualizer_tally(self):
     self.driver.get("http://127.0.0.1:8000/admin/login/?next=/admin/")
     self.driver.set_window_size(970, 518)
@@ -219,33 +221,4 @@ class TestVisualizer_Selenium():
 
 
  
-
-"""
-class testVisualizerCase(BaseTestCase):
-  def create_voting(self):
-        q = Question(desc='test question')
-        q.save()
-        for i in range(5):
-            opt = QuestionOption(question=q, option='option {}'.format(i+1))
-            opt.save()
-        v = Voting(name='test voting', question=q)
-        v.save()
-
-        a, _ = Auth.objects.get_or_create(url=settings.BASEURL,
-                                          defaults={'me': True, 'name': 'test auth'})
-        a.save()
-        v.auths.add(a)
-
-        return v
-  def test_visualizer_404(self):
-        v = self.create_voting()
-        data = {} #El campo action es requerido en la request
-        self.login()
-        response = self.client.('/visualizer/{}/'.format(v.pk+1),  format= 'json')
-        self.assertEquals(response.status_code, 404)
-        v2= self.create_voting()
-        response = self.client.get('/visualizer/{}/'.format(v2.pk),  format= 'json')
-        self.assertEquals(response.status_code, 400)
-"""
-  
     
