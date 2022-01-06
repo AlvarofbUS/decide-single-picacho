@@ -20,7 +20,7 @@ services:
     expose:
       - "5000"
     volumes:
-      - static:/app/static
+      - static:/app/staticfiles
     depends_on:
       - db
     networks:
@@ -33,7 +33,7 @@ services:
         context: .
         dockerfile: Dockerfile-nginx
     volumes:
-      - static:/app/static
+      - static:/app/staticfiles
     ports:
       - "8000:80"
     depends_on:
