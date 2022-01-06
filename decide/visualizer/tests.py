@@ -20,7 +20,8 @@ from selenium.webdriver.common.keys import Keys
 from base.models import Auth
 
 from base.tests import BaseTestCase
-
+"""
+    
 class TestVisualizer_Selenium():
   idv=0
   def setup(self):
@@ -220,5 +221,4 @@ class TestVisualizer_Selenium():
     self.driver.close()
 
 
- 
-    
+ """
