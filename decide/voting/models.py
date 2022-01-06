@@ -117,8 +117,10 @@ class Voting(models.Model):
                 'votes': votes
             })
 
-
-        data = { 'type': postproc_mode, 'options': opts,'escanio':escanios}
+        if postproc_mode == 'IDENTITY':
+            data = { 'type': postproc_mode, 'options': opts}
+        else :
+            data = { 'type': postproc_mode, 'options': opts,'escanio':escanios}
         postp = mods.post('postproc', json=data)
 
         self.postproc = postp
