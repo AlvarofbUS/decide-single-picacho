@@ -68,9 +68,8 @@ MODULES = [
     'voting',
 ]
 
-BASEURL = 'https://localhost:8000'
-#BASEURL = 'https://decide-single-picacho.herokuapp.com'
-
+#BASEURL = 'https://localhost:8000'
+BASEURL = 'https://decide-single-picacho.herokuapp.com'
 
 APIS = {
     'authentication': BASEURL,
@@ -194,5 +193,8 @@ if os.path.exists("config.jsonnet"):
 
 INSTALLED_APPS = INSTALLED_APPS + MODULES
 
+NOSE_ARGS = [
+    '--with-xunit'
+]
 import django_heroku
-django_heroku.settings(locals())
+django_heroku.settings(locals(),test_runner=False)
