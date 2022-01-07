@@ -16,9 +16,9 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install codacy-coverage
+  - pip install django-chartjs
   - pip install selenium
 script:
   - cd decide
-  - coverage run --branch --source=. ./manage.py test --keepdb --with-xunit
-  - coverage xml
-  - python-codacy-coverage -r coverage.xml
+  - cp travis_local_settings.py local_settings.py
+  - coverage run --branch --source=. ./manage.py test --keepdb 
