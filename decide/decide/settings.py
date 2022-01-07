@@ -68,8 +68,8 @@ MODULES = [
     'voting',
 ]
 
-#BASEURL = 'https://localhost:8000'
-BASEURL = 'https://decide-single-picacho.herokuapp.com'
+BASEURL = 'https://localhost:8000'
+#BASEURL = 'https://decide-single-picacho.herokuapp.com'
 
 APIS = {
     'authentication': BASEURL,
